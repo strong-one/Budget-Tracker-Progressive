@@ -52,13 +52,19 @@ function checkDatabase() {
         },
       })
         .then((response) => response.json())
-        .then(() => {
-          // if successful, open a transaction on your pending db
-          const transaction = db.transaction(["budgetStore"], "readwrite");
-          // access your pending object store
-          const save = transaction.objectStore("budgetStore");
-          // clear all items in your store
-          save.clear();
+        .then((res) => {
+          // If our returned response is not empty if length is not equal to zero open budget store and clear out
+          if (res.length !== 0) {
+            // Open another transaction to BudgetStore with the ability to read and write
+            transaction = db.transaction(["budgetStore"], "readwrite");
+
+            // Assign the current store to a variable
+            const currentStore = transaction.objectStore("budgetStore");
+
+            // Clear existing entries because our bulk add was successful
+            currentStore.clear();
+            console.log("Clearing Store");
+          }
         });
     }
   };
