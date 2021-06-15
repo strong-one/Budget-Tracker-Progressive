@@ -8,7 +8,7 @@ if ("serviceWorker" in navigator) {
       .register("/serviceworker.js") // linking to file
       .then((reg) => console.log("Service Worker: Registered"))
       // in temp string to add err variable
-      .catch((err) => console.log(`Service Worler: Error: ${err}`));
+      .catch((err) => console.log(`Service Worker: Error: ${err}`));
   });
 }
 
