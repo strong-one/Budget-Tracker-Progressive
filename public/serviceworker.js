@@ -18,7 +18,7 @@ const cacheName = "v1";
 // array of all pages to cache -- all routes in app -- everything in public folder except service worker.
 const cacheAssets = [
   "/",
-  "/db.js",
+  "/offlinedb.js",
   "/index.js",
   "/styles.css",
   "/icons/icon-192x192.png",
@@ -37,7 +37,44 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// call activate event
+// call activate event -- get rid of any old cache
 self.addEventListener("activate", (event) => {
   console.log("Service Worker: Activated");
+  // remove unwanted caches
+  event.waitUntil(
+    // loop through caches loop through caches and remove any unwanted.
+    caches.keys().then((cacheName) => {
+      return Promise.all(
+        cacheName.map((cache) => {
+          if (cache !== cacheName) {
+            console.log("Service Worker: Clearing");
+            return caches.delete(cache);
+          }
+        })
+      );
+    })
+  );
+});
+
+// call fetch event -- show cached files if offline
+
+self.addEventListener("fetch", (event) => {
+  console.log("Service Worker: Fetching");
+  event.respondWith(
+    // fetch will grab the event -- .catch, is if there is no service then will pull from cache
+    // fetch(event.request).catch(() => caches.match(event.request))
+    fetch(event.request)
+      .then((response) => {
+        // make copy of response
+        const resCopy = response.clone();
+        // open a cache
+        cache.open(cacheName).then((cache) => {
+          // add response to cache
+          cache.put(event.request, resCopy);
+        });
+        return response;
+        // if connection drops then .catch runs
+      })
+      .catch((err) => caches.match(event.request).then((response) => response))
+  );
 });
