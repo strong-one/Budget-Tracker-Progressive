@@ -29,11 +29,14 @@ self.addEventListener("install", (event) => {
   console.log("Service Worker: Installed");
   event.waitUntil(
     // open cache by my cacheName variable
-    caches.open(cacheName).then((cache) => {
-      console.log("Service Worker: Caching Files");
-      // adding all files in cache to cacheAssets -- can use variable or put array directly in parameter
-      cache.addAll(cacheAssets);
-    })
+    caches
+      .open(cacheName)
+      .then((cache) => {
+        console.log("Service Worker: Caching Files");
+        // adding all files in cache to cacheAssets -- can use variable or put array directly in parameter
+        cache.addAll(cacheAssets);
+      })
+      .then(() => self.skipWaiting())
   );
 });
 
