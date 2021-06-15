@@ -10,3 +10,8 @@
 // service workers are terminated when not in use. need https when pushing to remote server
 // life cycle events -- register worker -- install event -- activate event
 // functional events fetch -- sync
+
+// call Install event
+self.addEventListener("install", (event) => {
+  console.log("service worker installed");
+});
