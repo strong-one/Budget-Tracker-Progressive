@@ -20,6 +20,7 @@ const cacheAssets = [
   "/",
   "/offlinedb.js",
   "/index.js",
+  "/manifest.webmanifest",
   "/styles.css",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
@@ -61,23 +62,23 @@ self.addEventListener("activate", (event) => {
 
 // call fetch event -- show cached files if offline
 
-self.addEventListener("fetch", (event) => {
-  console.log("Service Worker: Fetching");
-  event.respondWith(
-    // fetch will grab the event -- .catch, is if there is no service then will pull from cache
-    // fetch(event.request).catch(() => caches.match(event.request))
-    fetch(event.request)
-      .then((response) => {
-        // make copy of response
-        const resCopy = response.clone();
-        // open a cache
-        cache.open(cacheName).then((cache) => {
-          // add response to cache
-          cache.put(event.request, resCopy);
-        });
-        return response;
-        // if connection drops then .catch runs
-      })
-      .catch((err) => caches.match(event.request).then((response) => response))
-  );
-});
+// self.addEventListener("fetch", (event) => {
+//   console.log("Service Worker: Fetching");
+//   event.respondWith(
+//     // fetch will grab the event -- .catch, is if there is no service then will pull from cache
+
+//     fetch(event.request)
+//       .then((response) => {
+//         // make copy of response
+//         const resCopy = response.clone();
+//         // open a cache
+//         cache.open(cacheName).then((cache) => {
+//           // add response to cache
+//           cache.put(event.request, resCopy);
+//         });
+//         return response;
+//         // if connection drops then .catch runs
+//       })
+//       .catch((err) => caches.match(event.request).then((response) => response))
+//   );
+// });
