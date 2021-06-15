@@ -11,10 +11,12 @@ request.onupgradeneeded = function (event) {
 };
 
 request.onsuccess = function (event) {
+  console.log("success");
   db = event.target.result;
 
   // navigator - window object -- checking if user is online
   if (navigator.onLine) {
+    console.log("Backend Online");
     checkDatabase();
   }
 };
