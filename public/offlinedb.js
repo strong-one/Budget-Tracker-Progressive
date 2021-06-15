@@ -1,3 +1,5 @@
+// queue db
+
 let db;
 
 const request = indexedDB.open("budgetList", 1);
@@ -5,7 +7,7 @@ const request = indexedDB.open("budgetList", 1);
 request.onupgradeneeded = function (event) {
   // create object store called "BudgetStore" and set autoIncrement to true
   const db = event.target.result;
-  db.createObjectStore("BudgetStore", { autoIncrement: true });
+  db.createObjectStore("budgetStore", { autoIncrement: true });
 };
 
 request.onsuccess = function (event) {
@@ -24,7 +26,7 @@ request.onerror = function (event) {
 
 function saveRecord(record) {
   // create a transaction on the pending db with readwrite access
-  const transaction = db.transaction(["pending"], "readwrite");
+  const transaction = db.transaction(["budgetStore"], "readwrite");
   // access your pending object store
   const save = transaction.objectStore("pending");
   // add record to your store with add method.
@@ -33,9 +35,9 @@ function saveRecord(record) {
 
 function checkDatabase() {
   // open a transaction on your pending db
-  const transaction = db.transaction(["pending"], "readwrite");
+  const transaction = db.transaction(["budgetStore"], "readwrite");
   // access your pending object store
-  const save = transaction.objectStore("pending");
+  const save = transaction.objectStore("budgetStore");
   // get all records from store and set to a variable
   const getAll = save.getAll();
   // once online -- all offline user data will be posted to database
@@ -52,9 +54,9 @@ function checkDatabase() {
         .then((response) => response.json())
         .then(() => {
           // if successful, open a transaction on your pending db
-          const transaction = db.transaction(["pending"], "readwrite");
+          const transaction = db.transaction(["budgetStore"], "readwrite");
           // access your pending object store
-          const save = transaction.objectStore("pending");
+          const save = transaction.objectStore("budgetStore");
           // clear all items in your store
           save.clear();
         });
