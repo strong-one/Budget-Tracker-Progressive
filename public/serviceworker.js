@@ -12,6 +12,32 @@
 // functional events fetch -- sync
 
 // call Install event
+
+// version
+const cacheName = "v1";
+// array of all pages to cache -- all routes in app -- everything in public folder except service worker.
+const cacheAssets = [
+  "/",
+  "/db.js",
+  "/index.js",
+  "/styles.css",
+  "/icons/icon-192x192.png",
+  "/icons/icon-512x512.png",
+];
+// attch event listener to worker
 self.addEventListener("install", (event) => {
-  console.log("service worker installed");
+  console.log("Service Worker: Installed");
+  event.waitUntil(
+    // open cache by my cacheName variable
+    caches.open(cacheName).then((cache) => {
+      console.log("Service Worker: Caching Files");
+      // adding all files in cache to cacheAssets -- can use variable or put array directly in parameter
+      cache.addAll(cacheAssets);
+    })
+  );
+});
+
+// call activate event
+self.addEventListener("activate", (event) => {
+  console.log("Service Worker: Activated");
 });
