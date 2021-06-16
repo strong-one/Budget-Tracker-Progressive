@@ -52,6 +52,7 @@ self.addEventListener("install", function (event) {
 
 // manage old caches(versions) -- if changes are made to service worker this will update to new version with new version and any added items to array
 self.addEventListener("activate", function (event) {
+  // waiting until all data is cached, once done will run rest of code block
   event.waitUntil(
     // mapping over array of cache keys removing old cache if name and data name does not match key
     caches.keys().then((keyList) => {
