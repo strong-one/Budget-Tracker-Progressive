@@ -2,12 +2,13 @@
 
 let db;
 
-const request = indexedDB.open("budgetList", 1);
+const request = window.indexedDB.open("budgetList", 1);
 
 request.onupgradeneeded = function (event) {
   // create object store called "BudgetStore" and set autoIncrement to true
   const db = event.target.result;
   db.createObjectStore("budgetStore", { autoIncrement: true });
+  // objectStore.createIndex("pending", "pending");
 };
 
 request.onsuccess = function (event) {
@@ -30,7 +31,7 @@ function saveRecord(record) {
   // create a transaction on the pending db with readwrite access
   const transaction = db.transaction(["budgetStore"], "readwrite");
   // access your pending object store
-  const save = transaction.objectStore("pending");
+  const save = transaction.objectStore("budgetStore");
   // add record to your store with add method.
   save.add(record);
 }

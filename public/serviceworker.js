@@ -15,6 +15,7 @@
 // version
 const FILES_TO_CACHE = [
   "/",
+  "/index.html",
   "/offlinedb.js",
   "/index.js",
   "/manifest.webmanifest",
