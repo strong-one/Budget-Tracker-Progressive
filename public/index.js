@@ -1,13 +1,15 @@
 // make sure service worker is supported
 
-// navigator is basicly the browser object can also do if (navigator.serviceWorker) because it is attached to that object
+// navigator is basicly the browser object (property in window object) can also do if (navigator.serviceWorker) because it is attached to that object
+// if true -- (service worker available) -- then run callback
 if ("serviceWorker" in navigator) {
-  // registers when window loads -- listening for load event
+  // registers when window loads  apon page load -- then will kick off callback function -- listening for load event
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/serviceworker.js") // linking to file
+      // registering service via register method
+      .register("/serviceworker.js") // linking to file where service worker is located -- SWs work with promises
       .then((reg) => console.log("Service Worker: Registered"))
-      // in temp string to add err variable
+      // in template string to add err variable
       .catch((err) => console.log(`Service Worker: Error: ${err}`));
   });
 }
