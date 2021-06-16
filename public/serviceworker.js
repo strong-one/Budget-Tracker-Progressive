@@ -9,12 +9,13 @@
 // will need to cache data requests and pages in this file
 // service workers are terminated when not in use. need https when pushing to remote server
 // life cycle events -- register worker -- install event -- activate event
-// functional events fetch -- sync
 
 // call Install event
 
 // version
 const cacheName = "v1";
+const cacheData = "v1Data";
+
 // array of all pages to cache -- all routes in app -- everything in public folder except service worker.
 const cacheAssets = [
   "/",
@@ -26,7 +27,7 @@ const cacheAssets = [
   "/icons/icon-512x512.png",
 ];
 // attch event listener to worker
-self.addEventListener("install", (event) => {
+self.addEventListener("install", function (event) {
   console.log("Service Worker: Installed");
   event.waitUntil(
     // open cache by my cacheName variable
@@ -42,7 +43,7 @@ self.addEventListener("install", (event) => {
 });
 
 // call activate event -- get rid of any old cache
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", function (event) {
   console.log("Service Worker: Activated");
   // remove unwanted caches
   event.waitUntil(
@@ -51,7 +52,7 @@ self.addEventListener("activate", (event) => {
       return Promise.all(
         cacheName.map((cache) => {
           if (cache !== cacheName) {
-            console.log("Service Worker: Clearing");
+            console.log("Service Worker: Clearing", cache);
             return caches.delete(cache);
           }
         })
@@ -62,23 +63,39 @@ self.addEventListener("activate", (event) => {
 
 // call fetch event -- show cached files if offline
 
-// self.addEventListener("fetch", (event) => {
-//   console.log("Service Worker: Fetching");
-//   event.respondWith(
-//     // fetch will grab the event -- .catch, is if there is no service then will pull from cache
+self.addEventListener("fetch", function (event) {
+  if (event.request.url.includes("/api/")) {
+    event.respondWith(
+      caches
+        .open(cacheData)
+        .then((cache) => {
+          return fetch(event.request)
+            .then((response) => {
+              if (response.status === 200) {
+                cache.put(event.request.url, response.clone());
+              }
 
-//     fetch(event.request)
-//       .then((response) => {
-//         // make copy of response
-//         const resCopy = response.clone();
-//         // open a cache
-//         cache.open(cacheName).then((cache) => {
-//           // add response to cache
-//           cache.put(event.request, resCopy);
-//         });
-//         return response;
-//         // if connection drops then .catch runs
-//       })
-//       .catch((err) => caches.match(event.request).then((response) => response))
-//   );
-// });
+              return response;
+            })
+            .catch((err) => {
+              return cache.match(event.request);
+            });
+        })
+        .catch((err) => console.log(err))
+    );
+
+    return;
+  }
+
+  event.respondWith(
+    fetch(event.request).catch(function () {
+      return caches.match(event.request).then(function (response) {
+        if (response) {
+          return response;
+        } else if (event.request.headers.get("accept").includes("text/html")) {
+          return caches.match("/");
+        }
+      });
+    })
+  );
+});
